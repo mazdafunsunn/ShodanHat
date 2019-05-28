@@ -1,37 +1,35 @@
-#/bin/env E:\Python27 (is my env)
 #Shodan uses Murmur3 hash for favicons
 #@clubmasterfu
-
+#http.favicon.hash:
 
 
 import mmh3
 import argparse
-import urllib2
+import urllib3
 import base64
 
 ap = argparse.ArgumentParser(description="Find Shodan by Favicon hash http.hash.favicon")
 ap.add_argument("host", help="(Example: http://127.0.0.1).")
 args = ap.parse_args()
 
-request = urllib2.Request(args.host+"/favicon.ico")
+http = urllib3.PoolManager()
+url = args.host+"/favicon.ico"
 
-response = urllib2.urlopen(request)
-print response.info()
-orginal = response.read()
-#favicon = base64.b32encode(orginal)
-favicon2 = base64.encodestring(orginal)
-print "Base 64 String:", favicon2
-
+response = http.request('GET', url)
+print (response.info())
+favicon = base64.encodebytes(response.data)
+print ("Base 64 String:", favicon)
 
 
-hash = mmh3.hash(favicon2)
-print 'Murmur hash of favicon should be: ', hash 
-print "---------------------------------\n"
+
+hash = mmh3.hash(favicon)
+print ('Murmur hash of favicon should be: ', hash) 
+print ("---------------------------------\n")
 
 
-print "---------------------------------\n"
+print ("---------------------------------\n")
 
-print ''
+print ('')
 
 
 
